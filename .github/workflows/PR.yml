@@ -1,0 +1,26 @@
+name: BuildAndTest
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - 'LICENSE'
+      - 'README.md'
+      - '.gitignore'
+jobs:
+  build-image-without-pushing:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout PR
+      uses: actions/checkout@v2
+
+    - name: Build Only
+      uses: jupyterhub/repo2docker-action@master
+      with:
+        NO_PUSH: 'true'
+        IMAGE_NAME: "uwhackweek/template"
+
+    - name: Report Image Size and Conda Packages
+      run: |
+        docker images
+        docker run uwhackweek/template:latest conda list --export
